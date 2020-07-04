@@ -2,10 +2,12 @@ import React from 'react';
 import axios from 'axios';
 import S3ListDocumentsRow from "./S3ListDocumentsRow";
 import {S3ObjectType} from "./list/S3LDFilename";
+import Breadcrumb from "react-bootstrap/Breadcrumb";
+import S3Breadcrumb from "./list/S3Breadcrumb";
 
 export default class S3ListDocuments extends React.Component {
     state = {
-        path: '/',
+        path: '',
         objects: [{
             name: '',
             object_key: '',
@@ -20,6 +22,9 @@ export default class S3ListDocuments extends React.Component {
     }
 
     fetchPath(uri: string) {
+        this.setState({
+            path: uri
+        });
         console.log("fetching:", uri);
         axios.get(`/api/items?getACL`, {
             params: {
@@ -37,6 +42,7 @@ export default class S3ListDocuments extends React.Component {
     render() {
         return (
             <>
+                <S3Breadcrumb path={this.state.path} navigationCallback={this.fetchPath.bind(this)}/>
                 <table className={"table table-reflow"}>
                     <thead>
                     <tr>

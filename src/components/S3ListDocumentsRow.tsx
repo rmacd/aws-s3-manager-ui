@@ -8,6 +8,9 @@ export default class S3ListDocumentsRow extends React.Component<S3ListObjectInte
         const is_public = (this.props.type === S3ObjectType.object) ? <S3IsPublicIcon is_public={this.props.is_public || false}/> : undefined;
         const filename = <S3LDFilename name={this.props.name} type={this.props.type} />;
         const entry = <a href={"#"} onClick={() => this.props.navigationCallback(this.props.object_key)}>{filename}</a>;
+
+        console.log(this.props.object_key, this.props);
+
         return (
             <tr>
                 <td>
