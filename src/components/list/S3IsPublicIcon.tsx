@@ -1,17 +1,20 @@
 import React from 'react';
-import {Visibility, VisibilityOff} from "@material-ui/icons";
+import {Check, VisibilityOff} from "@material-ui/icons";
 
 interface IS3IsPublicIcon {
-    is_public: boolean
+    object_key: string,
+    is_public: boolean,
+    toggleVisibilityCB: (object_key: string) => void,
 }
 
 export default class S3IsPublicIcon extends React.Component<IS3IsPublicIcon, any> {
     render() {
-        const is_public = (this.props.is_public) ? <Visibility/> : <VisibilityOff/>;
+        const icon = (this.props.is_public) ? <Check/> : <VisibilityOff/>;
         console.log(this.props);
+
         return (
             <>
-                {is_public}
+                <a href={"#"} onClick={() => this.props.toggleVisibilityCB(this.props.object_key)}>{icon}</a>
             </>
         );
     }

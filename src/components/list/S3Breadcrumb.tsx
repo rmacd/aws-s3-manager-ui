@@ -8,7 +8,6 @@ export interface IS3Breadcrumb {
 
 export default class S3Breadcrumb extends React.Component<IS3Breadcrumb, any>{
     render() {
-        console.log("Breadcrumb - current path:", this.props.path);
         const items = [];
         let currentPath = '';
         items.push(<Breadcrumb.Item href="#" onClick={() => this.props.navigationCallback('')}>Home</Breadcrumb.Item>);

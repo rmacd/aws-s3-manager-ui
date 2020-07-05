@@ -1,9 +1,9 @@
 import React from 'react';
 import axios from 'axios';
-import S3ListDocumentsRow from "./S3ListDocumentsRow";
+import S3LDRow from "./list/S3LDRow";
 import {S3ObjectType} from "./list/S3LDFilename";
-import Breadcrumb from "react-bootstrap/Breadcrumb";
 import S3Breadcrumb from "./list/S3Breadcrumb";
+import S3ObjectViewerModal from "./list/S3ObjectViewerModal";
 
 export default class S3ListDocuments extends React.Component {
     state = {
@@ -14,7 +14,12 @@ export default class S3ListDocuments extends React.Component {
             type: S3ObjectType.object,
             size: -1,
             is_public: false,
-        }]
+        }],
+        objectViewer: {
+            show: false,
+            path: '',
+            name: '',
+        }
     };
 
     componentDidMount() {
@@ -25,7 +30,6 @@ export default class S3ListDocuments extends React.Component {
         this.setState({
             path: uri
         });
-        console.log("fetching:", uri);
         axios.get(`/api/items?getACL`, {
             params: {
                 path: uri
@@ -37,6 +41,26 @@ export default class S3ListDocuments extends React.Component {
                     objects: objectResponse.objects
                 })
             })
+    }
+
+    openObject(object_key: string, name: string) {
+        if (object_key.endsWith('.txt') || object_key.endsWith('.pdf')) {
+            this.setState({
+                objectViewer: {
+                    show: true,
+                    path: object_key,
+                    name: name,
+                }
+            })
+        }
+    }
+
+    toggleVisibility(object_key: string) {
+        console.log("toggle visibility on", object_key);
+    }
+
+    modal_hide() {
+        this.setState({objectViewer: {show: false}})
     }
 
     render() {
@@ -52,9 +76,10 @@ export default class S3ListDocuments extends React.Component {
                     </tr>
                     </thead>
                     <tbody>
-                    {console.log(this.state.objects)}
-                    {this.state.objects.map(obj => <S3ListDocumentsRow
+                    {this.state.objects.map(obj => <S3LDRow
                         navigationCallback={this.fetchPath.bind(this)}
+                        openObjectCallback={this.openObject.bind(this)}
+                        toggleVisibilityCB={this.toggleVisibility.bind(this)}
                         name={obj.name}
                         object_key={obj.object_key}
                         type={obj.type}
@@ -63,6 +88,11 @@ export default class S3ListDocuments extends React.Component {
                     />)}
                     </tbody>
                 </table>
+                <S3ObjectViewerModal
+                    path={this.state.objectViewer.path} name={this.state.objectViewer.name}
+                    show={this.state.objectViewer.show}
+                    cb={this.modal_hide.bind(this)}
+                />
             </>
         );
     }
