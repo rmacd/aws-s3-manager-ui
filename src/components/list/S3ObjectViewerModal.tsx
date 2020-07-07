@@ -1,49 +1,31 @@
 import React from "react";
 import {Modal, Button} from 'react-bootstrap';
 import S3TemporaryLink from "./S3TemporaryLink";
-import axios from "axios";
 
 interface IS3OVModal {
     show: boolean,
     path: string,
     name: string,
-    cb: () => void,
+    fetchLinkCB: (uri: string) => void,
+    modalCloseCB: () => void,
+    signedLink: string,
 }
 
 export default class S3ObjectViewerModal extends React.Component<IS3OVModal, any> {
-    state = {
-        signedLink: '',
-    };
-
-    fetchTemporaryLink(uri: string) {
-        axios.get('/api/items/',
-            {
-                params: {
-                    download: encodeURIComponent(uri)
-                }
-            })
-            .then(res => {
-                console.log(res.data);
-                this.setState({
-                    signedLink: res.data.signedLink
-                })
-            })
-    }
-
     render() {
         return (
             <>
-                <Modal show={this.props.show} onHide={this.props.cb} size={"xl"}>
+                <Modal show={this.props.show} onHide={this.props.modalCloseCB} size={"xl"}>
                     <Modal.Header closeButton>
                         <Modal.Title>{this.props.name}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <Button variant={"primary"} onClick={() => this.fetchTemporaryLink(this.props.path)}>Generate
+                        <Button variant={"primary"} onClick={() => this.props.fetchLinkCB(this.props.path)}>Generate
                             temporary link</Button>
-                        <S3TemporaryLink temporaryLink={this.state.signedLink}/>
+                        <S3TemporaryLink signedLink={this.props.signedLink}/>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={this.props.cb}>
+                        <Button variant="secondary" onClick={this.props.modalCloseCB}>
                             Close
                         </Button>
                     </Modal.Footer>

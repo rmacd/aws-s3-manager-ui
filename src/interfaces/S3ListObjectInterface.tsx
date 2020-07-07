@@ -2,9 +2,9 @@ import React from 'react';
 import {S3ObjectType} from "../components/list/S3LDFilename";
 
 export default interface S3ListObjectInterface {
-    navigationCallback: (name: string) => void,
-    openObjectCallback: (object_key: string, name: string) => void,
-    toggleVisibilityCB: (object_key: string) => void,
+    navigationCB: (name: string) => void,
+    objectInfoCB: (object_key: string, name: string) => void,
+    setVisibilityCB: (object_key: string, b: boolean) => void,
     name: string,
     object_key: string,
     size?: number,
@@ -14,9 +14,9 @@ export default interface S3ListObjectInterface {
 
 export class S3ListObjectInterfaceImpl implements S3ListObjectInterface {
     constructor() {
-        this.navigationCallback = () => '';
-        this.openObjectCallback = () => '';
-        this.toggleVisibilityCB = () => '';
+        this.navigationCB = () => '';
+        this.objectInfoCB = () => '';
+        this.setVisibilityCB = (object_key, set_to) => '';
         this.name = '';
         this.object_key = '';
         this.size = -1;
@@ -24,9 +24,9 @@ export class S3ListObjectInterfaceImpl implements S3ListObjectInterface {
         this.is_public = undefined;
     }
 
-    navigationCallback: () => string;
-    openObjectCallback: () => string;
-    toggleVisibilityCB: () => string;
+    navigationCB: (name: string) => string;
+    objectInfoCB: (object_key: string, name: string) => string;
+    setVisibilityCB: (object_key: string, set_to: boolean) => void;
     name: string;
     object_key: string;
     size?: number;

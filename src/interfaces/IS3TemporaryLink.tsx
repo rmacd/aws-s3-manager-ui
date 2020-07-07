@@ -1,3 +1,3 @@
 export default interface IS3TemporaryLink {
-    temporaryLink: string,
+    signedLink: string,
 }

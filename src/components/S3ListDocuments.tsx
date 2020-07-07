@@ -4,10 +4,12 @@ import S3LDRow from "./list/S3LDRow";
 import {S3ObjectType} from "./list/S3LDFilename";
 import S3Breadcrumb from "./list/S3Breadcrumb";
 import S3ObjectViewerModal from "./list/S3ObjectViewerModal";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 export default class S3ListDocuments extends React.Component {
     state = {
         path: '',
+        currently_fetching: false,
         objects: [{
             name: '',
             object_key: '',
@@ -15,20 +17,22 @@ export default class S3ListDocuments extends React.Component {
             size: -1,
             is_public: false,
         }],
-        objectViewer: {
+        objectInfoModal: {
             show: false,
             path: '',
             name: '',
+            signedLink: '',
         }
     };
 
     componentDidMount() {
-        this.fetchPath('');
+        this.fetchItems('');
     }
 
-    fetchPath(uri: string) {
+    fetchItems(uri: string) {
         this.setState({
-            path: uri
+            path: uri,
+            currently_fetching: true,
         });
         axios.get(`/api/items?getACL`, {
             params: {
@@ -38,35 +42,79 @@ export default class S3ListDocuments extends React.Component {
             .then(res => {
                 const objectResponse = res.data;
                 this.setState({
-                    objects: objectResponse.objects
-                })
+                    objects: objectResponse.objects,
+                });
+                this.setState({currently_fetching: false});
             })
+    }
+
+    fetchSignedLink(uri: string) {
+        axios.get('/api/items/',
+            {
+                params: {
+                    download: encodeURIComponent(uri)
+                }
+            })
+            .then(res => {
+                const signedLink = Object.assign({signedLink: res.data.signedLink}, this.state.objectInfoModal);
+                this.setState({
+                    objectInfoModal: signedLink
+                })
+            });
+        console.log(this.state.objectInfoModal);
     }
 
     openObject(object_key: string, name: string) {
-        if (object_key.endsWith('.txt') || object_key.endsWith('.pdf')) {
-            this.setState({
-                objectViewer: {
-                    show: true,
-                    path: object_key,
-                    name: name,
-                }
-            })
-        }
+        this.setState({
+            objectInfoModal: {
+                show: true,
+                path: object_key,
+                name: name,
+            }
+        })
     }
 
-    toggleVisibility(object_key: string) {
-        console.log("toggle visibility on", object_key);
+    setVisibility(object_key: string, set_to: boolean) {
+        // let success = false;
+        // try {
+        //     console.log("(parent) toggle visibility on", object_key, "to", set_to);
+        //     let s = false;
+        //     const rtn = axios.put('/api/items/',
+        //         {
+        //             item: encodeURIComponent(object_key),
+        //             is_public: set_to
+        //         })
+        //         .then(value => {}
+        //         );
+        // } catch (e) {
+        //     console.error(e);
+        // }
+        // return success;
+        this.setState({
+            objects: this.state.objects.map((item, index) =>
+                item.object_key === object_key ? { ...item, is_public: set_to} : item
+            )
+        }, () => {
+            console.log("updated state");
+        })
     }
 
-    modal_hide() {
-        this.setState({objectViewer: {show: false}})
+    modalHide() {
+        this.setState({objectInfoModal: {show: false}});
     }
 
     render() {
+        if (this.state.currently_fetching) {
+            return (
+                <>
+                    <S3Breadcrumb path={this.state.path} navigationCallback={this.fetchItems.bind(this)}/>
+                    <CircularProgress/>
+                </>
+            );
+        }
         return (
             <>
-                <S3Breadcrumb path={this.state.path} navigationCallback={this.fetchPath.bind(this)}/>
+                <S3Breadcrumb path={this.state.path} navigationCallback={this.fetchItems.bind(this)}/>
                 <table className={"table table-reflow"}>
                     <thead>
                     <tr>
@@ -77,9 +125,10 @@ export default class S3ListDocuments extends React.Component {
                     </thead>
                     <tbody>
                     {this.state.objects.map(obj => <S3LDRow
-                        navigationCallback={this.fetchPath.bind(this)}
-                        openObjectCallback={this.openObject.bind(this)}
-                        toggleVisibilityCB={this.toggleVisibility.bind(this)}
+                        key={obj.object_key}
+                        navigationCB={this.fetchItems.bind(this)}
+                        objectInfoCB={this.openObject.bind(this)}
+                        setVisibilityCB={this.setVisibility.bind(this)}
                         name={obj.name}
                         object_key={obj.object_key}
                         type={obj.type}
@@ -89,9 +138,11 @@ export default class S3ListDocuments extends React.Component {
                     </tbody>
                 </table>
                 <S3ObjectViewerModal
-                    path={this.state.objectViewer.path} name={this.state.objectViewer.name}
-                    show={this.state.objectViewer.show}
-                    cb={this.modal_hide.bind(this)}
+                    path={this.state.objectInfoModal.path} name={this.state.objectInfoModal.name}
+                    show={this.state.objectInfoModal.show}
+                    modalCloseCB={this.modalHide.bind(this)}
+                    fetchLinkCB={this.fetchSignedLink.bind(this)}
+                    signedLink={this.state.objectInfoModal.signedLink}
                 />
             </>
         );
