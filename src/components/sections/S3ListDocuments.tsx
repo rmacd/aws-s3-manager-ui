@@ -1,9 +1,9 @@
 import React from 'react';
 import axios from 'axios';
-import S3LDRow from "./list/S3LDRow";
-import {S3ObjectType} from "./list/S3LDFilename";
-import S3Breadcrumb from "./list/S3Breadcrumb";
-import S3ObjectViewerModal from "./list/S3ObjectViewerModal";
+import S3LDRow from "../list/S3LDRow";
+import {S3ObjectType} from "../list/S3LDFilename";
+import S3Breadcrumb from "../list/S3Breadcrumb";
+import S3ObjectViewerModal from "../list/S3ObjectViewerModal";
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 export default class S3ListDocuments extends React.Component {
@@ -81,7 +81,6 @@ export default class S3ListDocuments extends React.Component {
         }
 
         try {
-            console.log("(parent) toggle visibility on", object_key, "to", !s3Object.is_public);
             let s = false;
             const rtn = axios.put('/api/items/',
                 {
@@ -93,8 +92,6 @@ export default class S3ListDocuments extends React.Component {
                             objects: this.state.objects.map((item, index) =>
                                 item.object_key === object_key ? {...item, is_public: !item.is_public} : item
                             )
-                        }, () => {
-                            console.log("updated state");
                         })
                     }
                 );

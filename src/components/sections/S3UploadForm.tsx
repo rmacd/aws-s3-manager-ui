@@ -2,10 +2,10 @@ import React, {createRef} from 'react';
 import FormFileLabel from "react-bootstrap/FormFileLabel";
 import Form from "react-bootstrap/Form";
 import FormFileInput from "react-bootstrap/FormFileInput";
-import UploadSubmitButton from "./UploadSubmitButton";
-import AsyncRequest from "./AsyncRequest";
+import UploadSubmitButton from "../UploadSubmitButton";
+import AsyncRequest from "../AsyncRequest";
 import {AxiosResponse} from "axios";
-import UploadStatus from "./UploadStatus";
+import UploadStatus from "../UploadStatus";
 
 // https://stackoverflow.com/questions/39041710/react-js-change-child-components-state-from-parent-component
 
@@ -30,7 +30,6 @@ export default class S3UploadForm extends React.Component {
         this.setState({
             uploading: false,
         });
-        console.log(response);
         return response;
     };
 

@@ -9,8 +9,10 @@ export default class S3TemporaryLink extends React.Component<IS3TemporaryLink, a
         }
         return (
             <Alert variant={"info"} className={"mt-3"}>
-                <div>Temporary link (valid for 60 seconds): <a href={`${this.props.signedLink}`} target={"_blank"}>link</a></div>
-                <textarea className={"mt-2 w-100"}>{this.props.signedLink}</textarea>
+                <div>Temporary link (valid for 60 seconds): <a href={`${this.props.signedLink}`}
+                                                               target={"_blank"}
+                                                               rel={"noopener noreferrer"}>link</a></div>
+                <textarea className={"mt-2 w-100"} value={this.props.signedLink} readOnly={true} rows={5}/>
             </Alert>
         );
     }

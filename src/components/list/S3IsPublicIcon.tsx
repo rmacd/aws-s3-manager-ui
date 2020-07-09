@@ -10,8 +10,6 @@ interface IS3IsPublicIcon {
 export default class S3IsPublicIcon extends React.Component<IS3IsPublicIcon, any> {
     render() {
         const icon = (this.props.is_public) ? <Check/> : <VisibilityOff/>;
-        console.log(this.props);
-
         return (
             <>
                 <a href={"#"} onClick={() => this.props.toggleVisibilityCB(this.props.object_key)}>{icon}</a>

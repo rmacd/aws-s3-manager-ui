@@ -12,10 +12,6 @@ export enum S3ObjectType {
 }
 
 export default class S3LDFilename extends React.Component<IS3LDFilename, any> {
-    constructor(props: IS3LDFilename) {
-        super(props);
-    }
-
     render() {
         const icon = (this.props.type === S3ObjectType.folder) ? <FolderOutlined/> : <Description/>;
         return (
