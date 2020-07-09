@@ -13,7 +13,6 @@ function S3Header() {
                     <Nav className="mr-auto">
                         <Nav.Link as={Link} to={"/"} className={"nav-link"}>Home</Nav.Link>
                         <Nav.Link as={Link} to={"/list"}>List items</Nav.Link>
-                        <Nav.Link as={Link} to={"/upload"} className={"nav-link"}>Upload item</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>

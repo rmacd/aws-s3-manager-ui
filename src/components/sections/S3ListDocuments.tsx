@@ -5,6 +5,9 @@ import {S3ObjectType} from "../list/S3LDFilename";
 import S3Breadcrumb from "../list/S3Breadcrumb";
 import S3ObjectViewerModal from "../list/S3ObjectViewerModal";
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Alert from "react-bootstrap/Alert";
+import {Link} from "react-router-dom";
+import {AddCircle} from "@material-ui/icons";
 
 export default class S3ListDocuments extends React.Component {
     state = {
@@ -81,8 +84,7 @@ export default class S3ListDocuments extends React.Component {
         }
 
         try {
-            let s = false;
-            const rtn = axios.put('/api/items/',
+            axios.put('/api/items/',
                 {
                     item: encodeURIComponent(object_key),
                     is_public: !s3Object.is_public,
@@ -138,6 +140,9 @@ export default class S3ListDocuments extends React.Component {
                     />)}
                     </tbody>
                 </table>
+                <Alert variant={"light"}>
+                    <Link to={{pathname: "/upload", state: {path: this.state.path}}}><AddCircle/> Add a document</Link>
+                </Alert>
                 <S3ObjectViewerModal
                     path={this.state.objectInfoModal.path} name={this.state.objectInfoModal.name}
                     show={this.state.objectInfoModal.show}
