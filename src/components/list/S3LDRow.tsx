@@ -4,26 +4,14 @@ import S3LDFilename, {S3ObjectType} from "./S3LDFilename";
 import S3IsPublicIcon from "./S3IsPublicIcon";
 
 export default class S3LDRow extends React.Component<S3ListObjectInterface, any> {
-    constructor(props: S3ListObjectInterface) {
-        super(props);
-        // this.setState({local_is_public: props.is_public});
-    }
-    state = {
-        // using a local variable to stop the entire table from being re-rendered
-        local_is_public: false
-    };
-
-    setVisibility(object_key: string) {
-        this.props.setVisibilityCB(object_key, !this.state.local_is_public);
-    }
 
     render() {
         // render the icon that shows whether the item is public or private
         const is_public = (this.props.type === S3ObjectType.object)
             ? <S3IsPublicIcon
-                is_public={this.state.local_is_public || false}
+                is_public={this.props.is_public || false}
                 object_key={this.props.object_key || ''}
-                setVisibilityCB={this.setVisibility.bind(this)}
+                toggleVisibilityCB={this.props.toggleVisibilityCB.bind(this)}
             />
             : undefined;
         const filename = <S3LDFilename name={this.props.name} type={this.props.type} />;

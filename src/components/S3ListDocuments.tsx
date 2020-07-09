@@ -74,29 +74,33 @@ export default class S3ListDocuments extends React.Component {
         })
     }
 
-    setVisibility(object_key: string, set_to: boolean) {
-        // let success = false;
-        // try {
-        //     console.log("(parent) toggle visibility on", object_key, "to", set_to);
-        //     let s = false;
-        //     const rtn = axios.put('/api/items/',
-        //         {
-        //             item: encodeURIComponent(object_key),
-        //             is_public: set_to
-        //         })
-        //         .then(value => {}
-        //         );
-        // } catch (e) {
-        //     console.error(e);
-        // }
-        // return success;
-        this.setState({
-            objects: this.state.objects.map((item, index) =>
-                item.object_key === object_key ? { ...item, is_public: set_to} : item
-            )
-        }, () => {
-            console.log("updated state");
-        })
+    toggleVisibility(object_key: string) {
+        let s3Object = this.state.objects.find(s => s.object_key === object_key);
+        if (s3Object === undefined) {
+            return
+        }
+
+        try {
+            console.log("(parent) toggle visibility on", object_key, "to", !s3Object.is_public);
+            let s = false;
+            const rtn = axios.put('/api/items/',
+                {
+                    item: encodeURIComponent(object_key),
+                    is_public: !s3Object.is_public,
+                })
+                .then(value => {
+                        this.setState({
+                            objects: this.state.objects.map((item, index) =>
+                                item.object_key === object_key ? {...item, is_public: !item.is_public} : item
+                            )
+                        }, () => {
+                            console.log("updated state");
+                        })
+                    }
+                );
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     modalHide() {
@@ -128,7 +132,7 @@ export default class S3ListDocuments extends React.Component {
                         key={obj.object_key}
                         navigationCB={this.fetchItems.bind(this)}
                         objectInfoCB={this.openObject.bind(this)}
-                        setVisibilityCB={this.setVisibility.bind(this)}
+                        toggleVisibilityCB={this.toggleVisibility.bind(this)}
                         name={obj.name}
                         object_key={obj.object_key}
                         type={obj.type}
