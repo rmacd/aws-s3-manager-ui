@@ -1,8 +1,6 @@
 import React from 'react';
-import Alert from "react-bootstrap/Alert";
-import {Link} from "react-router-dom";
-import S3ListDocuments from "../sections/S3ListDocuments";
-import {AddCircle} from "@material-ui/icons";
+import Alert from 'react-bootstrap/Alert';
+import {Link} from 'react-router-dom';
 
 export default class UploadComplete extends React.Component<{ upload_complete: boolean, path: string }, any> {
     render() {

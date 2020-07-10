@@ -5,10 +5,9 @@ import {S3ObjectType} from "../list/S3LDFilename";
 import S3Breadcrumb from "../list/S3Breadcrumb";
 import S3ObjectViewerModal from "../list/S3ObjectViewerModal";
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Alert from "react-bootstrap/Alert";
-import {Link} from "react-router-dom";
-import {AddCircle} from "@material-ui/icons";
-import {AppContext} from '../../App';
+import Alert from 'react-bootstrap/Alert';
+import {Link} from 'react-router-dom';
+import {AddCircle} from '@material-ui/icons';
 
 export default class S3ListDocuments extends React.Component {
     state = {
