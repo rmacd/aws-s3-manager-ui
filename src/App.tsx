@@ -13,23 +13,49 @@ import S3Home from "./components/sections/S3Home";
 import S3ListDocuments from "./components/sections/S3ListDocuments";
 import Container from "react-bootstrap/Container";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 // send xsrf on all requests
 axios.defaults.withCredentials = true;
+axios.defaults.headers.common['X-CSRF-Token'] = Cookies.get('_csrf-aws-s3mgr');
+
+export const AppContext = React.createContext({
+    bucket: ''
+});
 
 export default class App extends React.Component {
+    state = {
+        bucket: ''
+    };
+
+    componentDidMount() {
+        this.setState({
+            currently_fetching: true,
+        });
+        axios.get(`/api/version`,)
+            .then(res => {
+                const objectResponse = res.data;
+                this.setState({
+                    bucket: objectResponse.bucket,
+                });
+                this.setState({currently_fetching: false});
+            })
+    }
+
     render() {
         return (
             <div>
                 <Router>
                     <S3Header/>
-                    <Container>
-                        <Switch>
-                            <Route path={"/"} exact component={S3Home}/>
-                            <Route path={"/list"} exact component={S3ListDocuments}/>
-                            <Route path={"/upload"} exact component={S3UploadForm}/>
-                        </Switch>
-                    </Container>
+                    <AppContext.Provider value={{ bucket: this.state.bucket }}>
+                        <Container>
+                            <Switch>
+                                <Route path={"/"} exact component={S3Home}/>
+                                <Route path={"/list"} exact component={S3ListDocuments}/>
+                                <Route path={"/upload"} exact component={S3UploadForm}/>
+                            </Switch>
+                        </Container>
+                    </AppContext.Provider>
                 </Router>
                 <S3Footer/>
             </div>

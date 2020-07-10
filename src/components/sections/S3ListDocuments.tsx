@@ -8,6 +8,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Alert from "react-bootstrap/Alert";
 import {Link} from "react-router-dom";
 import {AddCircle} from "@material-ui/icons";
+import {AppContext} from '../../App';
 
 export default class S3ListDocuments extends React.Component {
     state = {
@@ -52,7 +53,7 @@ export default class S3ListDocuments extends React.Component {
     }
 
     fetchSignedLink(uri: string) {
-        axios.get('/api/items/',
+        axios.get('/api/items',
             {
                 params: {
                     download: encodeURIComponent(uri)
@@ -65,6 +66,19 @@ export default class S3ListDocuments extends React.Component {
                 })
             });
         console.log(this.state.objectInfoModal);
+    }
+
+    modalDelete(object_key: string) {
+        axios.delete('/api/items',
+            {
+                params: {
+                    object_key: encodeURIComponent(object_key)
+                }
+            })
+            .then(res => {
+                this.fetchItems(this.state.path);
+                this.modalHide();
+            })
     }
 
     openObject(object_key: string, name: string) {
@@ -123,7 +137,7 @@ export default class S3ListDocuments extends React.Component {
                     <tr>
                         <th>Filename</th>
                         <th>Size</th>
-                        <th>Public</th>
+                        <th className={"text-right"}>Public</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -144,9 +158,10 @@ export default class S3ListDocuments extends React.Component {
                     <Link to={{pathname: "/upload", state: {path: this.state.path}}}><AddCircle/> Add a document</Link>
                 </Alert>
                 <S3ObjectViewerModal
-                    path={this.state.objectInfoModal.path} name={this.state.objectInfoModal.name}
+                    object_key={this.state.objectInfoModal.path} name={this.state.objectInfoModal.name}
                     show={this.state.objectInfoModal.show}
                     modalCloseCB={this.modalHide.bind(this)}
+                    modalDeleteCB={this.modalDelete.bind(this)}
                     fetchLinkCB={this.fetchSignedLink.bind(this)}
                     signedLink={this.state.objectInfoModal.signedLink}
                 />
